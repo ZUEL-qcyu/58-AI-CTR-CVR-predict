@@ -271,7 +271,7 @@ model.load_state_dict(torch.load('model_weights.pth', map_location='cpu'))
 model.eval()
 
 test = torch.from_numpy(test.values).float()
-test_res = model(test)
+test_res = model(test.to(device))
 df = pd.DataFrame(test_res)
 df.to_csv('test_res.csv', index=False)
 
