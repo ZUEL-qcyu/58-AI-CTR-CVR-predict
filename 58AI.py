@@ -86,7 +86,7 @@ train_w2vDF_jobs_feature = pd.read_pickle('./data/train_w2vDF_jobs_feature.pkl')
 test_w2vDF_jobs_feature = pd.read_pickle('./data/test_w2vDF_jobs_feature.pkl')
 train_w2vDF_job_content_label = pd.read_pickle('./data/train_w2vDF_job_content_label.pkl')
 test_w2vDF_job_content_label = pd.read_pickle('./data/test_w2vDF_job_content_label.pkl')
-#添加此特征后需在模型参数修改稠密特征维度，此处每个embedding为8维
+
 train = pd.concat([train,train_w2vDF,train_w2vDF_click_job,train_w2vDF_jobs_feature,train_w2vDF_job_content_label],axis=1)
 test = pd.concat([test,test_w2vDF,test_w2vDF_click_job,test_w2vDF_jobs_feature,test_w2vDF_job_content_label],axis=1)
 
@@ -106,7 +106,7 @@ col = [tmp_col for tmp_col in train.columns if tmp_col not in ['click', 'send','
 
 scaler = StandardScaler()
 
-# 使用训练集拟合scaler并转换训练集
+
 train[col] = scaler.fit_transform(train[col])
 test[col] = scaler.transform(test[col])
 
@@ -129,8 +129,6 @@ X_val_tensor = torch.FloatTensor(X_val.values)
 y_val_tensor = torch.FloatTensor(y_val.values)
 
 
-
-# 创建Dataset
 train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
 val_dataset = TensorDataset(X_val_tensor, y_val_tensor)
 
@@ -139,13 +137,13 @@ batch_size = 2048
 train_loader = DataLoader(
     dataset=train_dataset,
     batch_size=batch_size,
-    shuffle=True,  # 训练集必须打乱
-    num_workers=0,  # 多进程加载
-    pin_memory=True  # 加速GPU传输
+    shuffle=True,  
+    num_workers=0,  
+    pin_memory=True  
 )
 val_loader = DataLoader(
     dataset=val_dataset,
-    batch_size=batch_size * 2,  # 验证集可用更大batch
+    batch_size=batch_size * 2, 
     shuffle=False,
     num_workers=0
 )
@@ -194,7 +192,6 @@ for epoch in range(epochs):
         # print(cvr_loss)
         total_loss = ctr_loss + alpha*cvr_loss  # 可以加权：α*ctr_loss + β*cvr_loss
 
-        # 反向传播和优化
         opt.zero_grad()
         total_loss.backward()
         opt.step()
@@ -235,15 +232,13 @@ for epoch in range(epochs):
                 cvr_loss = cvr_criterion(valid_cvr_pred, valid_send_labels)
                 val_cvr_loss += cvr_loss.item()
 
-                # 收集CVR预测结果用于计算AUC等指标
                 cvr_preds.extend(valid_cvr_pred.cpu().numpy())
                 cvr_targets.extend(valid_send_labels.cpu().numpy())
 
-            # 收集CTR预测结果
+            # CTR预测结果
             ctr_preds.extend(CTR.cpu().numpy())
             ctr_targets.extend(click_labels.cpu().numpy())
 
-            # --- 计算验证指标 ---
         avg_val_ctr_loss = val_ctr_loss / len(val_loader)
         avg_val_cvr_loss = val_cvr_loss / len(val_loader) if len(cvr_targets) > 0 else 0
 
