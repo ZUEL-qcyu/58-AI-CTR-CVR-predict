@@ -269,6 +269,7 @@ model.eval()
 
 test = torch.from_numpy(test.values).float()
 test_res = model(test.to(device))
-df = pd.DataFrame(test_res)
+test_res_cpu = test_res.cpu()
+df = pd.DataFrame(test_res_cpu.numpy())
 df.to_csv('test_res.csv', index=False)
 
