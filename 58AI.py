@@ -91,7 +91,7 @@ train = pd.concat([train,train_w2vDF,train_w2vDF_click_job,train_w2vDF_jobs_feat
 test = pd.concat([test,test_w2vDF,test_w2vDF_click_job,test_w2vDF_jobs_feature,test_w2vDF_job_content_label],axis=1)
 
 drop_columns = ['user_profile', 'click_job_id','jobs_feature','location','page','job_title_label', 'job_content_label']
-drop_columns1 = ['user_profile', 'click_job_id','jobs_feature','job_title_label', 'job_content_label']
+drop_columns1 = ['user_profile', 'click_job_id','jobs_feature','job_title_label', 'job_content_label','hour']
 
 train.drop(drop_columns, axis=1, inplace=True)
 test.drop(drop_columns1, axis=1, inplace=True)
