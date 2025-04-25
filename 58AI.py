@@ -245,8 +245,10 @@ for epoch in range(epochs):
         # AUC
         ctr_auc = roc_auc_score(ctr_targets, ctr_preds)
         cvr_auc = roc_auc_score(cvr_targets, cvr_preds) if len(cvr_targets) > 0 else 0
-        if ctr_auc > best_auc:
-            best_auc = ctr_auc
+
+        score = 0.5*ctr_auc + 0.5*cvr_auc
+        if score > best_auc:
+            best_auc = score
             torch.save(model.state_dict(), 'model_weights.pth')
             patience = 0
 
