@@ -269,7 +269,12 @@ model.eval()
 
 test = torch.from_numpy(test.values).float()
 test_res = model(test.to(device))
-test_res_cpu = test_res.cpu()
-df = pd.DataFrame(test_res_cpu.numpy())
+ctr_pred = test_res[0].detach().cpu().numpy()
+cvr_pred = test_res[1].detach().cpu().numpy()
+
+df = pd.DataFrame({
+    'CTR': ctr_pred.flatten(),
+    'CVR': cvr_pred.flatten()
+})
 df.to_csv('test_res.csv', index=False)
 
